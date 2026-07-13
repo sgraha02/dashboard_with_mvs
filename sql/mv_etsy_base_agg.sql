@@ -1,4 +1,4 @@
-CREATE OR REPLACE MATERIALIZED VIEW mv_etsy_days_to_delivery_base_agg
+CREATE OR REFRESH MATERIALIZED VIEW mv_etsy_days_to_delivery_base_agg
 COMMENT 'Pre-aggregated base grain for Etsy days-to-delivery dashboard. One row per ProductwithCode, SvcStd, OZip3, DZip3, DaysLateEarly. Filters out FC product code.'
 CLUSTER BY AUTO
 AS
