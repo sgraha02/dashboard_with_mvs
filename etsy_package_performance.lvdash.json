@@ -1,0 +1,1903 @@
+{
+  "datasets": [
+    {
+      "name": "f7dce01b",
+      "displayName": "Etsy",
+      "queryLines": [
+        "SELECT *\nFROM ${var.catalog}.${var.schema}.mv_etsy_days_to_delivery_base_agg"
+      ],
+      "columns": [
+        {
+          "displayName": "On-Time Rate",
+          "description": "Share of total volume delivered on time",
+          "expression": "TRY_DIVIDE(SUM(`Ontime`), SUM(`Total`))"
+        },
+        {
+          "displayName": "Late Rate",
+          "description": "Share of total volume delivered late",
+          "expression": "TRY_DIVIDE(SUM(`Late`), SUM(`Total`))"
+        },
+        {
+          "displayName": "Volume On-Time Day ",
+          "description": "Total volume delivered exactly on time (DaysLateEarly = 0)",
+          "expression": "SUM(CASE WHEN DaysLateEarly = 0 THEN Total ELSE 0 END)"
+        },
+        {
+          "displayName": "Volume Late Days",
+          "description": "Total volume delivered late or early (DaysLateEarly != 0)",
+          "expression": "SUM(CASE WHEN DaysLateEarly <> 0 THEN Total ELSE Late END)"
+        },
+        {
+          "displayName": "Volume Share",
+          "description": "Share of total volume for the current Days Late bucket within the current grouping",
+          "expression": "TRY_DIVIDE(SUM(`Total`), SUM(`Total`) AGGREGATE OVER (ORDER BY `DaysLateEarly` ALL))"
+        },
+        {
+          "displayName": "Cumulative Volume Share",
+          "description": "Cumulative share of total volume by Days Late within the current grouping",
+          "expression": "TRY_DIVIDE(SUM(`Total`) AGGREGATE OVER (ORDER BY `DaysLateEarly` CUMULATIVE), SUM(`Total`) AGGREGATE OVER (ORDER BY `DaysLateEarly` ALL))"
+        }
+      ]
+    },
+    {
+      "name": "89ae1ed8",
+      "displayName": "National",
+      "queryLines": [
+        "SELECT *\nFROM ${var.catalog}.${var.schema}.mv_national_days_to_delivery_base_agg"
+      ],
+      "columns": [
+        {
+          "displayName": "On-Time Rate",
+          "description": "Share of total volume delivered on time",
+          "expression": "TRY_DIVIDE(SUM(`Ontime`), SUM(`Total`))"
+        },
+        {
+          "displayName": "Late Rate",
+          "description": "Share of total volume delivered late (volume-weighted)",
+          "expression": "TRY_DIVIDE(SUM(`Late`), SUM(`Total`))"
+        },
+        {
+          "displayName": "Volume Share",
+          "description": "Share of total volume for the current Days Late bucket within the current grouping",
+          "expression": "TRY_DIVIDE(SUM(`Total`), SUM(`Total`) AGGREGATE OVER (ORDER BY `DaysLateEarly` ALL))"
+        },
+        {
+          "displayName": "Cumulative Volume Share",
+          "description": "Cumulative share of total volume by Days Late within the current grouping",
+          "expression": "TRY_DIVIDE(SUM(`Total`) AGGREGATE OVER (ORDER BY `DaysLateEarly` CUMULATIVE), SUM(`Total`) AGGREGATE OVER (ORDER BY `DaysLateEarly` ALL))"
+        },
+        {
+          "displayName": "Volume On-Time Day",
+          "description": "Total volume delivered exactly on time (DaysLateEarly = 0)",
+          "expression": "SUM(CASE WHEN DaysLateEarly = 0 THEN Total ELSE 0 END)"
+        },
+        {
+          "displayName": "Volume Late Days",
+          "description": "Total volume delivered late or early (DaysLateEarly != 0)",
+          "expression": "SUM(CASE WHEN DaysLateEarly <> 0 THEN Total ELSE Late END)"
+        }
+      ]
+    }
+  ],
+  "pages": [
+    {
+      "name": "3e6e8f4f",
+      "displayName": "Etsy",
+      "layout": [
+        {
+          "widget": {
+            "name": "e534bdac",
+            "multilineTextboxSpec": {
+              "lines": [
+                "# ![](data:image/png;base64,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)Etsy Package Performance\n",
+                "\n",
+                "National-level data available in bottom section | Source: `IVPROD`"
+              ]
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 12,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "shipper",
+            "queries": [
+              {
+                "name": "dashboards/01f16b51084f1173873523ab4dd67587/datasets/01f16b51084f11cd80aa64b4e13f026b_ParentPTSDUNSNo",
+                "query": {
+                  "datasetName": "f7dce01b",
+                  "fields": [
+                    {
+                      "name": "ParentPTSDUNSNo",
+                      "expression": "`ParentPTSDUNSNo`"
+                    },
+                    {
+                      "name": "ParentPTSDUNSNo_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Shipper Number"
+              },
+              "widgetType": "filter-single-select",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "ParentPTSDUNSNo",
+                    "queryName": "dashboards/01f16b51084f1173873523ab4dd67587/datasets/01f16b51084f11cd80aa64b4e13f026b_ParentPTSDUNSNo"
+                  }
+                ]
+              }
+            },
+            "specExtensions": {
+              "widgetBackgroundColor": {
+                "light": "#DAE0E5"
+              }
+            }
+          },
+          "position": {
+            "x": 3,
+            "y": 2,
+            "width": 3,
+            "height": 1
+          }
+        },
+        {
+          "widget": {
+            "name": "afef0e71",
+            "queries": [
+              {
+                "name": "dashboards/01f16b51084f1173873523ab4dd67587/datasets/01f16b51084f11cd80aa64b4e13f026b_MonthStartDate",
+                "query": {
+                  "datasetName": "f7dce01b",
+                  "fields": [
+                    {
+                      "name": "MonthStartDate",
+                      "expression": "`MonthStartDate`"
+                    },
+                    {
+                      "name": "MonthStartDate_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "dashboards/01f16b51084f1173873523ab4dd67587/datasets/01f170e7acd91ab6a3325a3adcb6cb3b_MonthStartDate",
+                "query": {
+                  "datasetName": "89ae1ed8",
+                  "fields": [
+                    {
+                      "name": "MonthStartDate",
+                      "expression": "`MonthStartDate`"
+                    },
+                    {
+                      "name": "MonthStartDate_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Month"
+              },
+              "scale": {
+                "type": "categorical",
+                "sort": {
+                  "by": "custom-order",
+                  "orderedValues": [
+                    "10/2025",
+                    "11/2025",
+                    "12/2025",
+                    "01/2026",
+                    "02/2026",
+                    "03/2026",
+                    "04/2026",
+                    "05/2026"
+                  ]
+                }
+              },
+              "widgetType": "filter-single-select",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "MonthStartDate",
+                    "queryName": "dashboards/01f16b51084f1173873523ab4dd67587/datasets/01f16b51084f11cd80aa64b4e13f026b_MonthStartDate"
+                  },
+                  {
+                    "fieldName": "MonthStartDate",
+                    "queryName": "dashboards/01f16b51084f1173873523ab4dd67587/datasets/01f170e7acd91ab6a3325a3adcb6cb3b_MonthStartDate"
+                  }
+                ]
+              }
+            },
+            "specExtensions": {
+              "widgetBackgroundColor": {
+                "light": "#DAE0E5"
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 2,
+            "width": 3,
+            "height": 1
+          }
+        },
+        {
+          "widget": {
+            "name": "0a2f6ef7",
+            "queries": [
+              {
+                "name": "dashboards/01f16b51084f1173873523ab4dd67587/datasets/01f16b51084f11cd80aa64b4e13f026b_ProductwithCode",
+                "query": {
+                  "datasetName": "f7dce01b",
+                  "fields": [
+                    {
+                      "name": "ProductwithCode",
+                      "expression": "`ProductwithCode`"
+                    },
+                    {
+                      "name": "ProductwithCode_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "dashboards/01f16b51084f1173873523ab4dd67587/datasets/01f170e7acd91ab6a3325a3adcb6cb3b_ProductwithCode",
+                "query": {
+                  "datasetName": "89ae1ed8",
+                  "fields": [
+                    {
+                      "name": "ProductwithCode",
+                      "expression": "`ProductwithCode`"
+                    },
+                    {
+                      "name": "ProductwithCode_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Product"
+              },
+              "scale": {
+                "type": "categorical",
+                "sort": {
+                  "by": "custom-order",
+                  "orderedValues": [
+                    "CB - Competitor Barcode",
+                    "EX - Priority Mail Express",
+                    "FC - First-Class",
+                    "GA - Ground Advantage",
+                    "IS - International Surface Air Lift",
+                    "PK - Package Services",
+                    "PK - Parcel Select DDU",
+                    "PK - Parcel Select NDC",
+                    "PK - Parcel Select SCF",
+                    "PM - Priority Mail",
+                    "PR - Parcel Return Service",
+                    "PS - Parcel Select",
+                    "PS - Parcel Select DDU",
+                    "PS - Parcel Select NDC",
+                    "PS - Parcel Select SCF",
+                    "SM - Marketing Mail",
+                    "SP - Standard Post"
+                  ]
+                }
+              },
+              "widgetType": "filter-single-select",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "ProductwithCode",
+                    "queryName": "dashboards/01f16b51084f1173873523ab4dd67587/datasets/01f16b51084f11cd80aa64b4e13f026b_ProductwithCode"
+                  },
+                  {
+                    "fieldName": "ProductwithCode",
+                    "queryName": "dashboards/01f16b51084f1173873523ab4dd67587/datasets/01f170e7acd91ab6a3325a3adcb6cb3b_ProductwithCode"
+                  }
+                ]
+              }
+            },
+            "specExtensions": {
+              "widgetBackgroundColor": {
+                "light": "#DAE0E5"
+              }
+            }
+          },
+          "position": {
+            "x": 9,
+            "y": 2,
+            "width": 3,
+            "height": 1
+          }
+        },
+        {
+          "widget": {
+            "name": "a5580834",
+            "queries": [
+              {
+                "name": "dashboards/01f16b51084f1173873523ab4dd67587/datasets/01f16b51084f11cd80aa64b4e13f026b_OffshoreInd",
+                "query": {
+                  "datasetName": "f7dce01b",
+                  "fields": [
+                    {
+                      "name": "OffshoreInd",
+                      "expression": "`OffshoreInd`"
+                    },
+                    {
+                      "name": "OffshoreInd_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "dashboards/01f16b51084f1173873523ab4dd67587/datasets/01f170e7acd91ab6a3325a3adcb6cb3b_OffshoreInd",
+                "query": {
+                  "datasetName": "89ae1ed8",
+                  "fields": [
+                    {
+                      "name": "OffshoreInd",
+                      "expression": "`OffshoreInd`"
+                    },
+                    {
+                      "name": "OffshoreInd_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Offshore Indicator"
+              },
+              "widgetType": "filter-single-select",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "OffshoreInd",
+                    "queryName": "dashboards/01f16b51084f1173873523ab4dd67587/datasets/01f16b51084f11cd80aa64b4e13f026b_OffshoreInd"
+                  },
+                  {
+                    "fieldName": "OffshoreInd",
+                    "queryName": "dashboards/01f16b51084f1173873523ab4dd67587/datasets/01f170e7acd91ab6a3325a3adcb6cb3b_OffshoreInd"
+                  }
+                ]
+              }
+            },
+            "specExtensions": {
+              "widgetBackgroundColor": {
+                "light": "#DAE0E5"
+              }
+            }
+          },
+          "position": {
+            "x": 4,
+            "y": 3,
+            "width": 2,
+            "height": 1
+          }
+        },
+        {
+          "widget": {
+            "name": "2f878936",
+            "queries": [
+              {
+                "name": "dashboards/01f16b51084f1173873523ab4dd67587/datasets/01f16b51084f11cd80aa64b4e13f026b_ForceMaj",
+                "query": {
+                  "datasetName": "f7dce01b",
+                  "fields": [
+                    {
+                      "name": "ForceMaj",
+                      "expression": "`ForceMaj`"
+                    },
+                    {
+                      "name": "ForceMaj_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "dashboards/01f16b51084f1173873523ab4dd67587/datasets/01f170e7acd91ab6a3325a3adcb6cb3b_ForceMaj",
+                "query": {
+                  "datasetName": "89ae1ed8",
+                  "fields": [
+                    {
+                      "name": "ForceMaj",
+                      "expression": "`ForceMaj`"
+                    },
+                    {
+                      "name": "ForceMaj_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Force Majeure"
+              },
+              "widgetType": "filter-single-select",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "ForceMaj",
+                    "queryName": "dashboards/01f16b51084f1173873523ab4dd67587/datasets/01f16b51084f11cd80aa64b4e13f026b_ForceMaj"
+                  },
+                  {
+                    "fieldName": "ForceMaj",
+                    "queryName": "dashboards/01f16b51084f1173873523ab4dd67587/datasets/01f170e7acd91ab6a3325a3adcb6cb3b_ForceMaj"
+                  }
+                ]
+              }
+            },
+            "specExtensions": {
+              "widgetBackgroundColor": {
+                "light": "#DAE0E5"
+              }
+            }
+          },
+          "position": {
+            "x": 9,
+            "y": 3,
+            "width": 3,
+            "height": 1
+          }
+        },
+        {
+          "widget": {
+            "name": "a4c8107c",
+            "queries": [
+              {
+                "name": "dashboards/01f16b51084f1173873523ab4dd67587/datasets/01f16b51084f11cd80aa64b4e13f026b_dzip3_facility",
+                "query": {
+                  "datasetName": "f7dce01b",
+                  "fields": [
+                    {
+                      "name": "dzip3_facility",
+                      "expression": "`dzip3_facility`"
+                    },
+                    {
+                      "name": "dzip3_facility_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "DZIP3"
+              },
+              "widgetType": "filter-single-select",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "dzip3_facility",
+                    "queryName": "dashboards/01f16b51084f1173873523ab4dd67587/datasets/01f16b51084f11cd80aa64b4e13f026b_dzip3_facility"
+                  }
+                ]
+              }
+            },
+            "specExtensions": {
+              "widgetBackgroundColor": {
+                "light": "#DAE0E5"
+              }
+            }
+          },
+          "position": {
+            "x": 2,
+            "y": 3,
+            "width": 2,
+            "height": 1
+          }
+        },
+        {
+          "widget": {
+            "name": "75f8d20c",
+            "queries": [
+              {
+                "name": "dashboards/01f16b51084f1173873523ab4dd67587/datasets/01f16b51084f11cd80aa64b4e13f026b_ParentShipperLocationName",
+                "query": {
+                  "datasetName": "f7dce01b",
+                  "fields": [
+                    {
+                      "name": "ParentShipperLocationName",
+                      "expression": "`ParentShipperLocationName`"
+                    },
+                    {
+                      "name": "ParentShipperLocationName_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Shipper"
+              },
+              "widgetType": "filter-single-select",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "ParentShipperLocationName",
+                    "queryName": "dashboards/01f16b51084f1173873523ab4dd67587/datasets/01f16b51084f11cd80aa64b4e13f026b_ParentShipperLocationName"
+                  }
+                ]
+              }
+            },
+            "specExtensions": {
+              "widgetBackgroundColor": {
+                "light": "#DAE0E5"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 2,
+            "width": 3,
+            "height": 1
+          }
+        },
+        {
+          "widget": {
+            "name": "39bf0928",
+            "queries": [
+              {
+                "name": "dashboards/01f16b51084f1173873523ab4dd67587/datasets/01f16b51084f11cd80aa64b4e13f026b_SvcStd",
+                "query": {
+                  "datasetName": "f7dce01b",
+                  "fields": [
+                    {
+                      "name": "SvcStd",
+                      "expression": "`SvcStd`"
+                    },
+                    {
+                      "name": "SvcStd_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "dashboards/01f16b51084f1173873523ab4dd67587/datasets/01f170e7acd91ab6a3325a3adcb6cb3b_SvcStd",
+                "query": {
+                  "datasetName": "89ae1ed8",
+                  "fields": [
+                    {
+                      "name": "SvcStd",
+                      "expression": "`SvcStd`"
+                    },
+                    {
+                      "name": "SvcStd_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Service Standard"
+              },
+              "widgetType": "filter-single-select",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "SvcStd",
+                    "queryName": "dashboards/01f16b51084f1173873523ab4dd67587/datasets/01f16b51084f11cd80aa64b4e13f026b_SvcStd"
+                  },
+                  {
+                    "fieldName": "SvcStd",
+                    "queryName": "dashboards/01f16b51084f1173873523ab4dd67587/datasets/01f170e7acd91ab6a3325a3adcb6cb3b_SvcStd"
+                  }
+                ]
+              }
+            },
+            "specExtensions": {
+              "widgetBackgroundColor": {
+                "light": "#DAE0E5"
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 3,
+            "width": 3,
+            "height": 1
+          }
+        },
+        {
+          "widget": {
+            "name": "86d5599c",
+            "queries": [
+              {
+                "name": "dashboards/01f16b51084f1173873523ab4dd67587/datasets/01f16b51084f11cd80aa64b4e13f026b_ozip3_facility",
+                "query": {
+                  "datasetName": "f7dce01b",
+                  "fields": [
+                    {
+                      "name": "ozip3_facility",
+                      "expression": "`ozip3_facility`"
+                    },
+                    {
+                      "name": "ozip3_facility_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "OZIP3"
+              },
+              "widgetType": "filter-single-select",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "ozip3_facility",
+                    "queryName": "dashboards/01f16b51084f1173873523ab4dd67587/datasets/01f16b51084f11cd80aa64b4e13f026b_ozip3_facility"
+                  }
+                ]
+              }
+            },
+            "specExtensions": {
+              "widgetBackgroundColor": {
+                "light": "#DAE0E5"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 3,
+            "width": 2,
+            "height": 1
+          }
+        },
+        {
+          "widget": {
+            "name": "total-volume",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "f7dce01b",
+                  "fields": [
+                    {
+                      "name": "sum(Total)",
+                      "expression": "SUM(`Total`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Total Volume"
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "sum(Total)",
+                  "format": {
+                    "type": "number-plain",
+                    "abbreviation": "compact",
+                    "decimalPlaces": {
+                      "type": "max",
+                      "places": 1
+                    }
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 4,
+            "width": 4,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "772f9856",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "f7dce01b",
+                  "fields": [
+                    {
+                      "name": "sum(Ontime)",
+                      "expression": "SUM(`Ontime`)"
+                    },
+                    {
+                      "name": "measure(On-Time Rate)",
+                      "expression": "MEASURE(`On-Time Rate`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "% On-Time"
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "measure(On-Time Rate)",
+                  "format": {
+                    "type": "number-percent",
+                    "decimalPlaces": {
+                      "type": "exact",
+                      "places": 1
+                    }
+                  }
+                },
+                "target": {
+                  "fieldName": "sum(Ontime)",
+                  "format": {
+                    "type": "number-plain",
+                    "abbreviation": "compact",
+                    "decimalPlaces": {
+                      "type": "max",
+                      "places": 1
+                    }
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 4,
+            "y": 4,
+            "width": 4,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "9f4ba5bb",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "f7dce01b",
+                  "fields": [
+                    {
+                      "name": "sum(Late)",
+                      "expression": "SUM(`Late`)"
+                    },
+                    {
+                      "name": "measure(Late Rate)",
+                      "expression": "MEASURE(`Late Rate`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "% Late"
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "measure(Late Rate)",
+                  "format": {
+                    "type": "number-percent",
+                    "decimalPlaces": {
+                      "type": "exact",
+                      "places": 1
+                    }
+                  }
+                },
+                "target": {
+                  "fieldName": "sum(Late)",
+                  "format": {
+                    "type": "number-plain",
+                    "abbreviation": "compact",
+                    "decimalPlaces": {
+                      "type": "max",
+                      "places": 1
+                    }
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 8,
+            "y": 4,
+            "width": 4,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "54c8f95a",
+            "multilineTextboxSpec": {
+              "lines": [
+                "# <span style=\"color: #E8ECF0;\">National Package Performance</span>"
+              ]
+            },
+            "specExtensions": {
+              "widgetBackgroundColor": {
+                "light": "#207AB5"
+              },
+              "widgetBorderColor": {
+                "light": "#FFFFFF"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 20,
+            "width": 12,
+            "height": 1
+          }
+        },
+        {
+          "widget": {
+            "name": "4e441d57",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "89ae1ed8",
+                  "fields": [
+                    {
+                      "name": "measure(On-Time Rate)",
+                      "expression": "MEASURE(`On-Time Rate`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "% On-Time"
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "measure(On-Time Rate)",
+                  "format": {
+                    "type": "number-percent",
+                    "decimalPlaces": {
+                      "type": "exact",
+                      "places": 1
+                    }
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 21,
+            "width": 6,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "01ee83e4",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "89ae1ed8",
+                  "fields": [
+                    {
+                      "name": "measure(Late Rate)",
+                      "expression": "MEASURE(`Late Rate`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "% Late"
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "measure(Late Rate)",
+                  "format": {
+                    "type": "number-percent",
+                    "decimalPlaces": {
+                      "type": "exact",
+                      "places": 1
+                    }
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 21,
+            "width": 6,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "9308a98b",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "89ae1ed8",
+                  "fields": [
+                    {
+                      "name": "ProductwithCode",
+                      "expression": "`ProductwithCode`"
+                    },
+                    {
+                      "name": "SvcStd",
+                      "expression": "`SvcStd`"
+                    },
+                    {
+                      "name": "DaysLateEarly",
+                      "expression": "`DaysLateEarly`"
+                    },
+                    {
+                      "name": "measure(Volume Share)",
+                      "expression": "MEASURE(`Volume Share`)"
+                    },
+                    {
+                      "name": "measure(Cumulative Volume Share)",
+                      "expression": "MEASURE(`Cumulative Volume Share`)"
+                    },
+                    {
+                      "name": "measure(On-Time Rate)",
+                      "expression": "MEASURE(`On-Time Rate`)"
+                    },
+                    {
+                      "name": "measure(Late Rate)",
+                      "expression": "MEASURE(`Late Rate`)"
+                    }
+                  ],
+                  "cubeGroupingSets": {
+                    "sets": [
+                      {
+                        "fieldNames": [
+                          "ProductwithCode",
+                          "SvcStd"
+                        ]
+                      },
+                      {
+                        "fieldNames": [
+                          "DaysLateEarly"
+                        ]
+                      }
+                    ]
+                  },
+                  "disaggregated": false,
+                  "orders": [
+                    {
+                      "direction": "ASC",
+                      "expression": "`ProductwithCode`"
+                    },
+                    {
+                      "direction": "ASC",
+                      "expression": "`SvcStd`"
+                    },
+                    {
+                      "direction": "ASC",
+                      "expression": "`DaysLateEarly`"
+                    }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "showTitle": true,
+                "showDescription": false,
+                "title": "National: Days Late Volume Distribution"
+              },
+              "widgetType": "pivot",
+              "encodings": {
+                "rows": [
+                  {
+                    "fieldName": "ProductwithCode",
+                    "scale": {
+                      "type": "categorical",
+                      "sort": {
+                        "by": "custom-order",
+                        "orderedValues": [
+                          "EX  - Priority Mail Express",
+                          "GA  - Ground Advantage",
+                          "PM  - Priority Mail",
+                          "PS  - Parcel Select DDU",
+                          "PS  - Parcel Select NDC",
+                          "PS  - Parcel Select SCF"
+                        ]
+                      }
+                    },
+                    "total": {
+                      "show": true,
+                      "position": "start"
+                    },
+                    "displayName": "Product"
+                  },
+                  {
+                    "fieldName": "SvcStd",
+                    "total": {
+                      "show": true,
+                      "position": "start"
+                    },
+                    "displayName": "Service Standard"
+                  }
+                ],
+                "columns": [
+                  {
+                    "fieldName": "DaysLateEarly",
+                    "displayName": "Days Late"
+                  }
+                ],
+                "cell": {
+                  "type": "multi-cell",
+                  "fields": [
+                    {
+                      "fieldName": "measure(Volume Share)",
+                      "format": {
+                        "type": "number-percent",
+                        "decimalPlaces": {
+                          "type": "exact",
+                          "places": 1
+                        },
+                        "hideGroupSeparator": true
+                      },
+                      "contentAlignment": "center",
+                      "cellType": "text",
+                      "displayName": "% of Volume",
+                      "style": {
+                        "type": "basic"
+                      }
+                    },
+                    {
+                      "fieldName": "measure(Cumulative Volume Share)",
+                      "format": {
+                        "type": "number-percent",
+                        "decimalPlaces": {
+                          "type": "exact",
+                          "places": 1
+                        },
+                        "hideGroupSeparator": true
+                      },
+                      "contentAlignment": "center",
+                      "cellType": "text",
+                      "displayName": "Cumulative % of Volume"
+                    },
+                    {
+                      "fieldName": "measure(On-Time Rate)",
+                      "cellType": "text",
+                      "format": {
+                        "type": "number-percent",
+                        "decimalPlaces": {
+                          "type": "exact",
+                          "places": 1
+                        },
+                        "hideGroupSeparator": true
+                      },
+                      "contentAlignment": "center",
+                      "displayName": "% On-Time"
+                    },
+                    {
+                      "fieldName": "measure(Late Rate)",
+                      "cellType": "text",
+                      "contentAlignment": "center",
+                      "format": {
+                        "type": "number-percent",
+                        "decimalPlaces": {
+                          "type": "exact",
+                          "places": 1
+                        },
+                        "hideGroupSeparator": true
+                      },
+                      "displayName": "% Late"
+                    }
+                  ]
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 28,
+            "width": 12,
+            "height": 9
+          }
+        },
+        {
+          "widget": {
+            "name": "fdd0782a",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "89ae1ed8",
+                  "fields": [
+                    {
+                      "name": "measure(On-Time Rate)",
+                      "expression": "MEASURE(`On-Time Rate`)"
+                    },
+                    {
+                      "name": "measure(Late Rate)",
+                      "expression": "MEASURE(`Late Rate`)"
+                    },
+                    {
+                      "name": "DaysLateEarly",
+                      "expression": "`DaysLateEarly`"
+                    },
+                    {
+                      "name": "measure(Volume Share)",
+                      "expression": "MEASURE(`Volume Share`)"
+                    },
+                    {
+                      "name": "measure(Cumulative Volume Share)",
+                      "expression": "MEASURE(`Cumulative Volume Share`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 1,
+              "frame": {
+                "showTitle": true,
+                "title": "National: Days Late Volume Distribution",
+                "showDescription": false,
+                "description": "Blue = On-Time (Day 0)  |  Red = Late (Day 1+)  |  Lines = % of Volume & Cumulative %"
+              },
+              "mark": {
+                "colors": [
+                  "#43A047",
+                  "#F3CB2C",
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 5
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 6
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 7
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 8
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 9
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 10
+                  }
+                ]
+              },
+              "widgetType": "combo",
+              "encodings": {
+                "x": {
+                  "fieldName": "DaysLateEarly",
+                  "displayName": "Days Late",
+                  "scale": {
+                    "type": "categorical",
+                    "sort": {
+                      "by": "natural-order"
+                    }
+                  }
+                },
+                "label": {
+                  "show": true
+                },
+                "extra": [
+                  {
+                    "fieldName": "measure(On-Time Rate)",
+                    "format": {
+                      "type": "number-percent",
+                      "decimalPlaces": {
+                        "type": "max",
+                        "places": 1
+                      }
+                    },
+                    "displayName": "% On-Time"
+                  },
+                  {
+                    "fieldName": "measure(Late Rate)",
+                    "format": {
+                      "type": "number-percent",
+                      "decimalPlaces": {
+                        "type": "max",
+                        "places": 1
+                      }
+                    },
+                    "displayName": "% Late"
+                  }
+                ],
+                "y": {
+                  "primary": {
+                    "fields": [],
+                    "scale": {
+                      "type": "quantitative"
+                    },
+                    "axis": {
+                      "title": "Volume"
+                    },
+                    "format": {
+                      "type": "number-plain",
+                      "abbreviation": "compact",
+                      "decimalPlaces": {
+                        "type": "max",
+                        "places": 1
+                      }
+                    }
+                  },
+                  "secondary": {
+                    "fields": [
+                      {
+                        "fieldName": "measure(Volume Share)",
+                        "displayName": "% of Volume"
+                      },
+                      {
+                        "fieldName": "measure(Cumulative Volume Share)",
+                        "displayName": "Cumulative % of Volume"
+                      }
+                    ],
+                    "scale": {
+                      "type": "quantitative"
+                    },
+                    "axis": {
+                      "title": "Cumulative %"
+                    },
+                    "format": {
+                      "type": "number-percent",
+                      "decimalPlaces": {
+                        "type": "max",
+                        "places": 1
+                      }
+                    }
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 23,
+            "width": 12,
+            "height": 5
+          }
+        },
+        {
+          "widget": {
+            "name": "e8f62cf7",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "f7dce01b",
+                  "fields": [
+                    {
+                      "name": "measure(On-Time Rate)",
+                      "expression": "MEASURE(`On-Time Rate`)"
+                    },
+                    {
+                      "name": "measure(Late Rate)",
+                      "expression": "MEASURE(`Late Rate`)"
+                    },
+                    {
+                      "name": "DaysLateEarly",
+                      "expression": "`DaysLateEarly`"
+                    },
+                    {
+                      "name": "measure(Volume On-Time Day )",
+                      "expression": "MEASURE(`Volume On-Time Day `)"
+                    },
+                    {
+                      "name": "measure(Volume Late Days)",
+                      "expression": "MEASURE(`Volume Late Days`)"
+                    },
+                    {
+                      "name": "measure(Volume Share)",
+                      "expression": "MEASURE(`Volume Share`)"
+                    },
+                    {
+                      "name": "measure(Cumulative Volume Share)",
+                      "expression": "MEASURE(`Cumulative Volume Share`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 1,
+              "frame": {
+                "showTitle": true,
+                "title": "Etsy: Days Late Volume Distribution",
+                "showDescription": false,
+                "description": "Blue = On-Time (Day 0)  |  Red = Late (Day 1+)  |  Lines = % of Volume & Cumulative %"
+              },
+              "mark": {
+                "layout": "stack",
+                "colors": [
+                  "#207AB5",
+                  "#E71800",
+                  "#43A047",
+                  "#F3CB2C",
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 5
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 6
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 7
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 8
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 9
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 10
+                  }
+                ]
+              },
+              "widgetType": "combo",
+              "encodings": {
+                "x": {
+                  "fieldName": "DaysLateEarly",
+                  "displayName": "Days Late",
+                  "scale": {
+                    "type": "categorical",
+                    "sort": {
+                      "by": "natural-order"
+                    }
+                  }
+                },
+                "label": {
+                  "show": true
+                },
+                "extra": [
+                  {
+                    "fieldName": "measure(On-Time Rate)",
+                    "format": {
+                      "type": "number-percent",
+                      "decimalPlaces": {
+                        "type": "max",
+                        "places": 1
+                      }
+                    },
+                    "displayName": "% On-Time"
+                  },
+                  {
+                    "fieldName": "measure(Late Rate)",
+                    "format": {
+                      "type": "number-percent",
+                      "decimalPlaces": {
+                        "type": "max",
+                        "places": 1
+                      }
+                    },
+                    "displayName": "% Late"
+                  }
+                ],
+                "y": {
+                  "primary": {
+                    "fields": [
+                      {
+                        "fieldName": "measure(Volume On-Time Day )",
+                        "displayName": "On-Time Volume"
+                      },
+                      {
+                        "fieldName": "measure(Volume Late Days)",
+                        "displayName": "Late Volume"
+                      }
+                    ],
+                    "scale": {
+                      "type": "quantitative"
+                    },
+                    "axis": {
+                      "title": "Volume"
+                    },
+                    "format": {
+                      "type": "number-plain",
+                      "abbreviation": "compact",
+                      "decimalPlaces": {
+                        "type": "max",
+                        "places": 1
+                      }
+                    }
+                  },
+                  "secondary": {
+                    "fields": [
+                      {
+                        "fieldName": "measure(Volume Share)",
+                        "displayName": "% of Volume"
+                      },
+                      {
+                        "fieldName": "measure(Cumulative Volume Share)",
+                        "displayName": "Cumulative % of Volume"
+                      }
+                    ],
+                    "scale": {
+                      "type": "quantitative"
+                    },
+                    "axis": {
+                      "title": "Cumulative %"
+                    },
+                    "format": {
+                      "type": "number-percent",
+                      "decimalPlaces": {
+                        "type": "max",
+                        "places": 1
+                      }
+                    }
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 6,
+            "width": 12,
+            "height": 5
+          }
+        },
+        {
+          "widget": {
+            "name": "4c0a1333",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "f7dce01b",
+                  "fields": [
+                    {
+                      "name": "ProductwithCode",
+                      "expression": "`ProductwithCode`"
+                    },
+                    {
+                      "name": "SvcStd",
+                      "expression": "`SvcStd`"
+                    },
+                    {
+                      "name": "OZip3",
+                      "expression": "`OZip3`"
+                    },
+                    {
+                      "name": "DZip3",
+                      "expression": "`DZip3`"
+                    },
+                    {
+                      "name": "DaysLateEarly",
+                      "expression": "`DaysLateEarly`"
+                    },
+                    {
+                      "name": "sum(Total)",
+                      "expression": "SUM(`Total`)"
+                    },
+                    {
+                      "name": "measure(Volume Share)",
+                      "expression": "MEASURE(`Volume Share`)"
+                    },
+                    {
+                      "name": "measure(Cumulative Volume Share)",
+                      "expression": "MEASURE(`Cumulative Volume Share`)"
+                    },
+                    {
+                      "name": "sum(Ontime)",
+                      "expression": "SUM(`Ontime`)"
+                    },
+                    {
+                      "name": "measure(On-Time Rate)",
+                      "expression": "MEASURE(`On-Time Rate`)"
+                    },
+                    {
+                      "name": "sum(Late)",
+                      "expression": "SUM(`Late`)"
+                    },
+                    {
+                      "name": "measure(Late Rate)",
+                      "expression": "MEASURE(`Late Rate`)"
+                    }
+                  ],
+                  "cubeGroupingSets": {
+                    "sets": [
+                      {
+                        "fieldNames": [
+                          "ProductwithCode",
+                          "SvcStd",
+                          "OZip3",
+                          "DZip3"
+                        ]
+                      },
+                      {
+                        "fieldNames": [
+                          "DaysLateEarly"
+                        ]
+                      }
+                    ]
+                  },
+                  "disaggregated": false,
+                  "orders": [
+                    {
+                      "direction": "ASC",
+                      "expression": "`ProductwithCode`"
+                    },
+                    {
+                      "direction": "ASC",
+                      "expression": "`SvcStd`"
+                    },
+                    {
+                      "direction": "ASC",
+                      "expression": "`OZip3`"
+                    },
+                    {
+                      "direction": "ASC",
+                      "expression": "`DZip3`"
+                    },
+                    {
+                      "direction": "ASC",
+                      "expression": "`DaysLateEarly`"
+                    }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "showTitle": true,
+                "showDescription": false,
+                "title": "Etsy: Days Late Volume Distribution"
+              },
+              "widgetType": "pivot",
+              "encodings": {
+                "rows": [
+                  {
+                    "fieldName": "ProductwithCode",
+                    "scale": {
+                      "type": "categorical",
+                      "sort": {
+                        "by": "custom-order",
+                        "orderedValues": [
+                          "EX  - Priority Mail Express",
+                          "GA  - Ground Advantage",
+                          "PM  - Priority Mail",
+                          "PS  - Parcel Select DDU",
+                          "PS  - Parcel Select NDC",
+                          "PS  - Parcel Select SCF"
+                        ]
+                      }
+                    },
+                    "total": {
+                      "show": true,
+                      "position": "start"
+                    },
+                    "displayName": "Product"
+                  },
+                  {
+                    "fieldName": "SvcStd",
+                    "total": {
+                      "show": true,
+                      "position": "start"
+                    },
+                    "displayName": "Service Standard"
+                  },
+                  {
+                    "fieldName": "OZip3",
+                    "displayName": "OZIP3"
+                  },
+                  {
+                    "fieldName": "DZip3",
+                    "displayName": "DZIP3"
+                  }
+                ],
+                "columns": [
+                  {
+                    "fieldName": "DaysLateEarly",
+                    "displayName": "Days Late"
+                  }
+                ],
+                "cell": {
+                  "type": "multi-cell",
+                  "fields": [
+                    {
+                      "fieldName": "sum(Total)",
+                      "cellType": "text",
+                      "format": {
+                        "type": "number-plain",
+                        "abbreviation": "none",
+                        "decimalPlaces": {
+                          "type": "exact",
+                          "places": 0
+                        },
+                        "hideGroupSeparator": false
+                      },
+                      "contentAlignment": "center",
+                      "displayName": "Total Volume"
+                    },
+                    {
+                      "fieldName": "measure(Volume Share)",
+                      "format": {
+                        "type": "number-percent",
+                        "decimalPlaces": {
+                          "type": "exact",
+                          "places": 1
+                        },
+                        "hideGroupSeparator": true
+                      },
+                      "contentAlignment": "center",
+                      "cellType": "text",
+                      "displayName": "% of Volume",
+                      "style": {
+                        "type": "basic"
+                      }
+                    },
+                    {
+                      "fieldName": "measure(Cumulative Volume Share)",
+                      "format": {
+                        "type": "number-percent",
+                        "decimalPlaces": {
+                          "type": "exact",
+                          "places": 1
+                        },
+                        "hideGroupSeparator": true
+                      },
+                      "contentAlignment": "center",
+                      "cellType": "text",
+                      "displayName": "Cumulative % of Volume"
+                    },
+                    {
+                      "fieldName": "sum(Ontime)",
+                      "cellType": "text",
+                      "format": {
+                        "type": "number-plain",
+                        "abbreviation": "none",
+                        "decimalPlaces": {
+                          "type": "exact",
+                          "places": 0
+                        },
+                        "hideGroupSeparator": false
+                      },
+                      "contentAlignment": "center",
+                      "displayName": "On-Time Volume"
+                    },
+                    {
+                      "fieldName": "measure(On-Time Rate)",
+                      "cellType": "text",
+                      "contentAlignment": "center",
+                      "format": {
+                        "type": "number-percent",
+                        "decimalPlaces": {
+                          "type": "exact",
+                          "places": 1
+                        },
+                        "hideGroupSeparator": true
+                      },
+                      "displayName": "% On-Time"
+                    },
+                    {
+                      "fieldName": "sum(Late)",
+                      "cellType": "text",
+                      "contentAlignment": "center",
+                      "format": {
+                        "type": "number-plain",
+                        "abbreviation": "none",
+                        "decimalPlaces": {
+                          "type": "exact",
+                          "places": 0
+                        },
+                        "hideGroupSeparator": false
+                      },
+                      "displayName": "Late Volume"
+                    },
+                    {
+                      "fieldName": "measure(Late Rate)",
+                      "cellType": "text",
+                      "contentAlignment": "center",
+                      "format": {
+                        "type": "number-percent",
+                        "decimalPlaces": {
+                          "type": "exact",
+                          "places": 1
+                        },
+                        "hideGroupSeparator": true
+                      },
+                      "displayName": "% Late"
+                    }
+                  ]
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 11,
+            "width": 12,
+            "height": 9
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_CANVAS",
+      "layoutVersion": "GRID_V1"
+    },
+    {
+      "name": "3018abfb",
+      "displayName": "Notes",
+      "layout": [
+        {
+          "widget": {
+            "name": "3de361fd",
+            "multilineTextboxSpec": {
+              "lines": [
+                "<span style=\"text-align:center;display:block\"><span style=\"font-size:18px;color:#E8ECF0\">**Report an issue**</span>[![](https://usps365.sharepoint.com/:l:/s/ServicePerformanceReportingDashboards/JAD9oJso3U1LTYskge5S0WTyAVcijH3CDDNSlG-L78P_qmY?nav=OWY0Mjk4YmYtN2Q1My00MzY3LWJkZDYtMzM0Y2IwMGY0YTRm)](https://usps365.sharepoint.com/:l:/s/ServicePerformanceReportingDashboards/JAD9oJso3U1LTYskge5S0WTyAVcijH3CDDNSlG-L78P_qmY?nav=OWY0Mjk4YmYtN2Q1My00MzY3LWJkZDYtMzM0Y2IwMGY0YTRm)</span>"
+              ]
+            },
+            "specExtensions": {
+              "widgetBackgroundColor": {
+                "light": "#F97316"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 2,
+            "height": 1
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_CANVAS",
+      "layoutVersion": "GRID_V1"
+    }
+  ],
+  "uiSettings": {
+    "theme": {
+      "canvasBackgroundColor": {
+        "light": "#BEDFF3",
+        "dark": "#1F272D"
+      },
+      "widgetBackgroundColor": {
+        "light": "#FFFFFF",
+        "dark": "#11171C"
+      },
+      "widgetBorderColor": {
+        "light": "#207AB5"
+      },
+      "fontColor": {
+        "light": "#11171C",
+        "dark": "#E8ECF0"
+      },
+      "selectionColor": {
+        "light": "#2272B4",
+        "dark": "#8ACAFF"
+      },
+      "widgetHeaderAlignment": "LEFT",
+      "textBoxVerticalAlign": "VERTICAL_ALIGN_CENTER",
+      "widgetPadding": 8,
+      "widgetMargin": 8,
+      "widgetCornerRadius": 4,
+      "widgetShadow": 0
+    },
+    "applyModeEnabled": false
+  }
+}
