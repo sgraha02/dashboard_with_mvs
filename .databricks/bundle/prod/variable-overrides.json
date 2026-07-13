@@ -1,0 +1,7 @@
+{
+  "source_catalog": "ivprod",
+  "source_schema": "db_rpt",
+  "target_catalog": "ivprod",
+  "target_schema": "db_rpt",
+  "warehouse_id": ""
+}

@@ -4,10 +4,14 @@ bundle:
 variables:
   warehouse_id:
     description: "SQL warehouse ID used for MV creation and dashboard queries"
-  catalog:
-    description: "Unity Catalog catalog name (e.g. ivprod)"
-  schema:
-    description: "Schema name within the catalog (e.g. db_rpt)"
+  source_catalog:
+    description: "Catalog containing the source raw tables (e.g. ivprod)"
+  source_schema:
+    description: "Schema containing the source raw tables (e.g. db_rpt)"
+  target_catalog:
+    description: "Catalog where materialized views will be written"
+  target_schema:
+    description: "Schema where materialized views will be written"
 
 targets:
   dev:
@@ -24,19 +28,16 @@ resources:
       file_path: ./etsy_package_performance.lvdash.json
       warehouse_id: ${var.warehouse_id}
 
-  jobs:
-    mv_setup:
-      name: "etsy-package-performance-mv-setup"
-      tasks:
-        - task_key: create_etsy_mv
-          sql_task:
-            file:
-              path: ./sql/mv_etsy_base_agg.sql
-            warehouse_id: "${var.warehouse_id}"
-        - task_key: create_national_mv
-          depends_on:
-            - task_key: create_etsy_mv
-          sql_task:
-            file:
-              path: ./sql/mv_national_base_agg.sql
-            warehouse_id: "${var.warehouse_id}"
+  pipelines:
+    mv_pipeline:
+      name: "etsy-package-performance-mvs"
+      catalog: ${var.target_catalog}
+      schema: ${var.target_schema}
+      serverless: true
+      channel: CURRENT
+      continuous: false
+      libraries:
+        - file:
+            path: ./sql/mv_etsy_base_agg.sql
+        - file:
+            path: ./sql/mv_national_base_agg.sql

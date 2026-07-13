@@ -1,0 +1,7 @@
+{
+  "source_catalog": "ivprod",
+  "source_schema": "db_rpt",
+  "target_catalog": "uapdev",
+  "target_schema": "default",
+  "warehouse_id": "4b6a42a61c9cdd9c"
+}
