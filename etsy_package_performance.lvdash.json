@@ -77,6 +77,44 @@
           "expression": "SUM(CASE WHEN DaysLateEarly <> 0 THEN Total ELSE Late END)"
         }
       ]
+    },
+    {
+      "name": "d8f0a3b2",
+      "displayName": "National Volume Distribution",
+      "queryLines": [
+        "SELECT *\nFROM ${var.catalog}.${var.schema}.mv_national_volume_distribution"
+      ],
+      "columns": [
+        {
+          "displayName": "On-Time Rate",
+          "description": "Share of total volume delivered on time",
+          "expression": "TRY_DIVIDE(SUM(`Ontime`), SUM(`Total`))"
+        },
+        {
+          "displayName": "Late Rate",
+          "description": "Share of total volume delivered late",
+          "expression": "TRY_DIVIDE(SUM(`Late`), SUM(`Total`))"
+        }
+      ]
+    },
+    {
+      "name": "c7e9f2a1",
+      "displayName": "Etsy Volume Distribution",
+      "queryLines": [
+        "SELECT *\nFROM ${var.catalog}.${var.schema}.mv_etsy_volume_distribution"
+      ],
+      "columns": [
+        {
+          "displayName": "On-Time Rate",
+          "description": "Share of total volume delivered on time",
+          "expression": "TRY_DIVIDE(SUM(`Ontime`), SUM(`Total`))"
+        },
+        {
+          "displayName": "Late Rate",
+          "description": "Share of total volume delivered late",
+          "expression": "TRY_DIVIDE(SUM(`Late`), SUM(`Total`))"
+        }
+      ]
     }
   ],
   "pages": [
@@ -1014,7 +1052,7 @@
               {
                 "name": "main_query",
                 "query": {
-                  "datasetName": "89ae1ed8",
+                  "datasetName": "d8f0a3b2",
                   "fields": [
                     {
                       "name": "ProductwithCode",
@@ -1030,11 +1068,11 @@
                     },
                     {
                       "name": "measure(Volume Share)",
-                      "expression": "MEASURE(`Volume Share`)"
+                      "expression": "SUM(`VolumeShare`)"
                     },
                     {
                       "name": "measure(Cumulative Volume Share)",
-                      "expression": "MEASURE(`Cumulative Volume Share`)"
+                      "expression": "SUM(`CumulativeVolumeShare`)"
                     },
                     {
                       "name": "measure(On-Time Rate)",
@@ -1045,21 +1083,6 @@
                       "expression": "MEASURE(`Late Rate`)"
                     }
                   ],
-                  "cubeGroupingSets": {
-                    "sets": [
-                      {
-                        "fieldNames": [
-                          "ProductwithCode",
-                          "SvcStd"
-                        ]
-                      },
-                      {
-                        "fieldNames": [
-                          "DaysLateEarly"
-                        ]
-                      }
-                    ]
-                  },
                   "disaggregated": false,
                   "orders": [
                     {
@@ -1104,18 +1127,10 @@
                         ]
                       }
                     },
-                    "total": {
-                      "show": true,
-                      "position": "start"
-                    },
                     "displayName": "Product"
                   },
                   {
                     "fieldName": "SvcStd",
-                    "total": {
-                      "show": true,
-                      "position": "start"
-                    },
                     "displayName": "Service Standard"
                   }
                 ],
@@ -1565,7 +1580,7 @@
               {
                 "name": "main_query",
                 "query": {
-                  "datasetName": "f7dce01b",
+                  "datasetName": "c7e9f2a1",
                   "fields": [
                     {
                       "name": "ProductwithCode",
@@ -1593,11 +1608,11 @@
                     },
                     {
                       "name": "measure(Volume Share)",
-                      "expression": "MEASURE(`Volume Share`)"
+                      "expression": "SUM(`VolumeShare`)"
                     },
                     {
                       "name": "measure(Cumulative Volume Share)",
-                      "expression": "MEASURE(`Cumulative Volume Share`)"
+                      "expression": "SUM(`CumulativeVolumeShare`)"
                     },
                     {
                       "name": "sum(Ontime)",
@@ -1616,23 +1631,6 @@
                       "expression": "MEASURE(`Late Rate`)"
                     }
                   ],
-                  "cubeGroupingSets": {
-                    "sets": [
-                      {
-                        "fieldNames": [
-                          "ProductwithCode",
-                          "SvcStd",
-                          "OZip3",
-                          "DZip3"
-                        ]
-                      },
-                      {
-                        "fieldNames": [
-                          "DaysLateEarly"
-                        ]
-                      }
-                    ]
-                  },
                   "disaggregated": false,
                   "orders": [
                     {
@@ -1685,18 +1683,10 @@
                         ]
                       }
                     },
-                    "total": {
-                      "show": true,
-                      "position": "start"
-                    },
                     "displayName": "Product"
                   },
                   {
                     "fieldName": "SvcStd",
-                    "total": {
-                      "show": true,
-                      "position": "start"
-                    },
                     "displayName": "Service Standard"
                   },
                   {

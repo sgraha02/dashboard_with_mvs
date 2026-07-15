@@ -41,3 +41,7 @@ resources:
             path: ./sql/mv_etsy_base_agg.sql
         - file:
             path: ./sql/mv_national_base_agg.sql
+        - file:
+            path: ./sql/mv_etsy_volume_dist.sql
+        - file:
+            path: ./sql/mv_national_volume_dist.sql
