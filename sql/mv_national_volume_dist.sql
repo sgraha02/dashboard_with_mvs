@@ -9,8 +9,6 @@ WITH with_share AS (
   SELECT
     ProductwithCode,
     SvcStd,
-    OZip3,
-    DZip3,
     DaysLateEarly,
     Total,
     Ontime,
@@ -24,8 +22,6 @@ WITH with_share AS (
 SELECT
   ProductwithCode,
   SvcStd,
-  OZip3,
-  DZip3,
   DaysLateEarly,
   Total,
   Ontime,
