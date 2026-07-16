@@ -1103,7 +1103,7 @@
                       "expression": "MEASURE(`Late Rate`)"
                     }
                   ],
-                  "disaggregated": false,
+                  "disaggregated": true,
                   "orders": [
                     {
                       "direction": "ASC",
@@ -1147,10 +1147,18 @@
                         ]
                       }
                     },
+                    "total": {
+                      "show": true,
+                      "position": "start"
+                    },
                     "displayName": "Product"
                   },
                   {
                     "fieldName": "SvcStd",
+                    "total": {
+                      "show": true,
+                      "position": "start"
+                    },
                     "displayName": "Service Standard"
                   }
                 ],
@@ -1651,7 +1659,7 @@
                       "expression": "MEASURE(`Late Rate`)"
                     }
                   ],
-                  "disaggregated": false,
+                  "disaggregated": true,
                   "orders": [
                     {
                       "direction": "ASC",
@@ -1703,10 +1711,18 @@
                         ]
                       }
                     },
+                    "total": {
+                      "show": true,
+                      "position": "start"
+                    },
                     "displayName": "Product"
                   },
                   {
                     "fieldName": "SvcStd",
+                    "total": {
+                      "show": true,
+                      "position": "start"
+                    },
                     "displayName": "Service Standard"
                   },
                   {
