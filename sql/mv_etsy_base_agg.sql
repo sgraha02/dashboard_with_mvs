@@ -1,5 +1,5 @@
 CREATE OR REFRESH MATERIALIZED VIEW mv_etsy_days_to_delivery_base_agg
-COMMENT 'Pre-aggregated base grain for Etsy days-to-delivery dashboard. One row per ProductwithCode, SvcStd, OZip3, DZip3, DaysLateEarly. Filters out FC product code.'
+COMMENT 'Pre-aggregated base grain for Etsy days-to-delivery dashboard. One row per ProductwithCode, SvcStd, OZip3, DZip3, DaysLateEarly plus filter columns. Filters out FC product code.'
 CLUSTER BY AUTO
 AS
 SELECT
@@ -8,6 +8,11 @@ SELECT
   OZip3,
   DZip3,
   DaysLateEarly,
+  MonthStartDate,
+  OffshoreInd,
+  ForceMaj,
+  ParentPTSDUNSNo,
+  ParentShipperLocationName,
   SUM(Total)  AS Total,
   SUM(Ontime) AS Ontime,
   SUM(Late)   AS Late
@@ -18,4 +23,9 @@ GROUP BY
   SvcStd,
   OZip3,
   DZip3,
-  DaysLateEarly;
+  DaysLateEarly,
+  MonthStartDate,
+  OffshoreInd,
+  ForceMaj,
+  ParentPTSDUNSNo,
+  ParentShipperLocationName;

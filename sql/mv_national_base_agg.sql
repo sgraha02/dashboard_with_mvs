@@ -1,11 +1,14 @@
 CREATE OR REFRESH MATERIALIZED VIEW mv_national_days_to_delivery_base_agg
-COMMENT 'Pre-aggregated base grain for National days-to-delivery dashboard. One row per ProductwithCode, SvcStd, DaysLateEarly. Filters to GA, PM, PK, EX product codes. National table has no OZip3/DZip3.'
+COMMENT 'Pre-aggregated base grain for National days-to-delivery dashboard. One row per ProductwithCode, SvcStd, DaysLateEarly plus filter columns. Filters to GA, PM, PK, EX product codes. National table has no OZip3/DZip3/ParentPTSDUNSNo/ParentShipperLocationName.'
 CLUSTER BY AUTO
 AS
 SELECT
   ProductwithCode,
   SvcStd,
   DaysLateEarly,
+  MonthStartDate,
+  OffshoreInd,
+  ForceMaj,
   SUM(Total)  AS Total,
   SUM(Ontime) AS Ontime,
   SUM(Late)   AS Late
@@ -14,4 +17,7 @@ WHERE ProductCode IN ('GA', 'PM', 'PK', 'EX')
 GROUP BY
   ProductwithCode,
   SvcStd,
-  DaysLateEarly;
+  DaysLateEarly,
+  MonthStartDate,
+  OffshoreInd,
+  ForceMaj;
