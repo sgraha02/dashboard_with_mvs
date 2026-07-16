@@ -94,6 +94,16 @@
           "displayName": "Late Rate",
           "description": "Share of total volume delivered late",
           "expression": "TRY_DIVIDE(SUM(`Late`), SUM(`Total`))"
+        },
+        {
+          "displayName": "Volume Share",
+          "description": "Pre-computed share of volume for this Days Late bucket within the current grouping",
+          "expression": "SUM(`VolumeShare`)"
+        },
+        {
+          "displayName": "Cumulative Volume Share",
+          "description": "Pre-computed cumulative share of volume by Days Late within the current grouping",
+          "expression": "SUM(`CumulativeVolumeShare`)"
         }
       ]
     },
@@ -113,6 +123,16 @@
           "displayName": "Late Rate",
           "description": "Share of total volume delivered late",
           "expression": "TRY_DIVIDE(SUM(`Late`), SUM(`Total`))"
+        },
+        {
+          "displayName": "Volume Share",
+          "description": "Pre-computed share of volume for this Days Late bucket within the current grouping",
+          "expression": "SUM(`VolumeShare`)"
+        },
+        {
+          "displayName": "Cumulative Volume Share",
+          "description": "Pre-computed cumulative share of volume by Days Late within the current grouping",
+          "expression": "SUM(`CumulativeVolumeShare`)"
         }
       ]
     }
@@ -1068,11 +1088,11 @@
                     },
                     {
                       "name": "measure(Volume Share)",
-                      "expression": "SUM(`VolumeShare`)"
+                      "expression": "MEASURE(`Volume Share`)"
                     },
                     {
                       "name": "measure(Cumulative Volume Share)",
-                      "expression": "SUM(`CumulativeVolumeShare`)"
+                      "expression": "MEASURE(`Cumulative Volume Share`)"
                     },
                     {
                       "name": "measure(On-Time Rate)",
@@ -1608,11 +1628,11 @@
                     },
                     {
                       "name": "measure(Volume Share)",
-                      "expression": "SUM(`VolumeShare`)"
+                      "expression": "MEASURE(`Volume Share`)"
                     },
                     {
                       "name": "measure(Cumulative Volume Share)",
-                      "expression": "SUM(`CumulativeVolumeShare`)"
+                      "expression": "MEASURE(`Cumulative Volume Share`)"
                     },
                     {
                       "name": "sum(Ontime)",
